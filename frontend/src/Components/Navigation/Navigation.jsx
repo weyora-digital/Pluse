@@ -15,13 +15,15 @@ function Navigation() {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    setAnchorEl(null);
+    localStorage.clear();
+    console.log("logout");
+    navigate('/login');
   };
   const navigate = useNavigate();
-  const handleLogout = () => {
-    console.log("logout");
-    handleClose();
-  };
+  // const handleLogout = () => {
+  //   console.log("logout");
+  //   handleClose();
+  // };
   return (
     <div className="h-screen sticky top-0 bg-gray-100 px-3 my-3 -mx-4 rounded-3xl" >
       <div>

@@ -26,11 +26,11 @@ const Authentication = () => {
             </p>
             {/* <p class="text-sm mt-6">Step into your fitness journey with ease and confidence.</p> */}
             <p class="text-base mt-10">
-            Don't have an account? 
-        <Link
-          to="/signup"
-          className="text-amber-600 font-semibold hover:underline ml-1"
-        >
+              Don't have an account?
+              <Link
+                to="/signup"
+                className="text-amber-600 font-semibold hover:underline ml-1"
+              >
                 Join the community now
               </Link>
             </p>

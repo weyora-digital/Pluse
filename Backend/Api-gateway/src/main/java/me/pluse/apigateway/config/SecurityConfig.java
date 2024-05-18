@@ -12,50 +12,53 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoders;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
+ @Configuration
+ @EnableWebSecurity
+ public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(request -> {
-//                    request.requestMatchers("/api/mealplan/**").permitAll();
-//                });
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/eureka/**", "/api/mealplan/**")
-                        .permitAll()
-//                        .anyRequest()
-//                        .authenticated()
-                );
-//                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
+     @Bean
+     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+         http
+                 .csrf(AbstractHttpConfigurer::disable)
+                 .cors(AbstractHttpConfigurer::disable)
+                 //                .authorizeHttpRequests(request -> {
+                 //                    request.requestMatchers("/api/mealplan/**").permitAll();
+                 //                });
+                 .authorizeHttpRequests(authorize -> authorize
+                         .requestMatchers("/eureka/**", "/auth/login")
+                         .permitAll()
+                         .anyRequest()
+                         .authenticated()
+                 )
+                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
 
-        return http.build();
-    }
-}
+         return http.build();
+     }
+ }
 
 
 //@Configuration
 //@EnableWebFluxSecurity
 //public class SecurityConfig {
+//   @Bean
+//   public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity serverHttpSecurity) {
+//       serverHttpSecurity
+//               .csrf(ServerHttpSecurity.CsrfSpec::disable)
+//               .authorizeExchange(exchange -> exchange
+//                       .pathMatchers("/eureka/**").permitAll()
+//                       .pathMatchers("/auth/**").permitAll()
+//                       .anyExchange()
+//                       .authenticated())
+//               .oauth2ResourceServer((oauth2) -> oauth2
+//                       .jwt(Customizer.withDefaults()));
+//       return serverHttpSecurity.build();
+//   }
 //
-//    @Bean
-//    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity serverHttpSecurity) {
-//        serverHttpSecurity
-//                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-//                .authorizeExchange(exchange -> exchange
-//                        .pathMatchers("/eureka/**")
-//                        .permitAll()
-//                        .anyExchange()
-//                        .authenticated())
-//                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
-//        return serverHttpSecurity.build();
-//    }
 //}
