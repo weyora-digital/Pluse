@@ -3,7 +3,15 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { Avatar, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Avatar,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import image from "../../Assets/gym.jpeg";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
@@ -14,6 +22,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Close } from "@mui/icons-material";
 import DragAndDropUpload from "./DragAndDropUpload";
+import { mealplancreate } from "../../Helper/helper";
 
 const style = {
   position: "absolute",
@@ -37,10 +46,44 @@ export default function MealPlanModel({ handleClose, open }) {
   //   });
 
   const [uploadingImage, setuploadingImage] = useState(false);
-  const [selectedImage, setSelectedImage] = useState("");
+  // const [selectedImage, setSelectedImage] = useState("");
 
-  const handleSubmit = (values) => {
-    console.log("values", values);
+  const handleSubmit = async (values) => {
+    setuploadingImage(true);
+
+    const formData = new FormData();
+
+    formData.append("file", values.image);
+  
+
+    // Assuming `values` contains the rest of the form data
+    formData.append(
+      "mealPlanJson",
+      JSON.stringify({
+        title: values.title,
+        description: values.description,
+        dietType: values.dietType,
+        recipes: values.recipes,
+        nutritionalInfo: values.nutritionalInfo,
+        portionSizes: values.portionSizes,
+      })
+    );
+
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    try {
+      const data = await mealplancreate(formData);
+      console.log("Meal plan created successfully", data);
+      alert("Meal plan created successfully")
+      // navigate("/some-path"); // Redirect on success
+    } catch (error) {
+      console.error("Failed to create meal plan", error);
+      // Handle error (e.g., show error message)
+    } finally {
+      setuploadingImage(false);
+    }
   };
 
   const formik = useFormik({
@@ -48,7 +91,7 @@ export default function MealPlanModel({ handleClose, open }) {
       title: "",
       image: "",
       description: "",
-      dietType: "",
+      dietType: "keto",
       recipes: "",
       nutritionalInfo: "",
       portionSizes: "",
@@ -57,21 +100,20 @@ export default function MealPlanModel({ handleClose, open }) {
     onSubmit: handleSubmit,
   });
 
-  const handleSelectImage = (event) => {
-    setuploadingImage(true);
-    const imgUrl = event.target.files[0];
-    formik.setFieldValue("image", imgUrl);
-    setSelectedImage(imgUrl);
-    setuploadingImage(false);
+  // const handleSelectImage = (event) => {
+  //   setuploadingImage(true);
+  //   const imgUrl = event.target.files[0];
+  //   formik.setFieldValue("image", imgUrl);
+  //   setSelectedImage(imgUrl);
+  //   setuploadingImage(false);
+  // };
+
+  const handleFileAccepted = (file) => {
+    formik.setFieldValue("image", file);
   };
 
-  const handleFileAccepted = file => {
-    formik.setFieldValue('image', file);
-  };
-
-
-  const handleDietChange = diet => {
-    formik.setFieldValue("dietType", diet)
+  const handleDietChange = (diet) => {
+    formik.setFieldValue("dietType", diet);
     // setAge(event.target.value);
   };
 
@@ -148,7 +190,7 @@ export default function MealPlanModel({ handleClose, open }) {
                   </div>
                   <div className="hideScrollBar overflow-y-scroll overflow-x-hidden h-[60vh]">
                     <div className="space-y-3 pt-5">
-                    <DragAndDropUpload onFileAccepted={handleFileAccepted} />
+                      <DragAndDropUpload onFileAccepted={handleFileAccepted} />
                       <TextField
                         fullWidth
                         id="title"
@@ -181,25 +223,25 @@ export default function MealPlanModel({ handleClose, open }) {
                         }
                       />
                       <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
-        <InputLabel id="dietType">Dietary type</InputLabel>
-        <Select
-          labelId="dietType"
-          id="dietType"
-          value={formik.values.diet}
-          label="Dietary type"
-          onChange={formik.handleChange}
-        >
-          <MenuItem value={10}>Keto</MenuItem>
-          <MenuItem value={20}>Paleo</MenuItem>
-          <MenuItem value={30}>Vegan</MenuItem>
-          <MenuItem value={30}>Vegetarian</MenuItem>
-          <MenuItem value={30}>Mediterranean</MenuItem>
-          <MenuItem value={30}>Low-Carb</MenuItem>
-          <MenuItem value={30}>High-Protein</MenuItem>
-        </Select>
-      </FormControl>
-    </Box>
+                        <FormControl fullWidth>
+                          <InputLabel id="dietType">Dietary type</InputLabel>
+                          <Select
+                            labelId="dietType"
+                            id="dietType"
+                            value={formik.values.diet}
+                            label="Dietary type"
+                            onChange={formik.handleChange}
+                          >
+                            <MenuItem value={10}>Keto</MenuItem>
+                            <MenuItem value={20}>Paleo</MenuItem>
+                            <MenuItem value={30}>Vegan</MenuItem>
+                            <MenuItem value={30}>Vegetarian</MenuItem>
+                            <MenuItem value={30}>Mediterranean</MenuItem>
+                            <MenuItem value={30}>Low-Carb</MenuItem>
+                            <MenuItem value={30}>High-Protein</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Box>
 
                       <TextField
                         fullWidth

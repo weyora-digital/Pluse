@@ -8,6 +8,7 @@ import RestaurantIcon from "@mui/icons-material/Restaurant";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import GradingIcon from "@mui/icons-material/Grading";
 import MealPlanModel from "./MealPlanModel";
+import MealPlanCard from "./MealPlanCard";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("Tweet text is required"),
@@ -123,6 +124,9 @@ const HomeSection = () => {
           <MealPlanModel open={openMealPlanModel} handleClose={handleCloseMealPlanModel}/>
         </section>
       </React.Fragment>
+      <section>
+        <MealPlanCard />
+      </section>
       <section>
         {[1, 1, 1, 1].map((item) => (
           <TweetCard />

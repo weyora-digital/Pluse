@@ -18,20 +18,78 @@ export async function login({username, password}){
                 }]
             }
         );
-        return response.data
+        const { access_token } = response.data;
+
+        if (access_token) {
+            console.log("Access Token:", access_token); // Optional: log the token for debugging
+            localStorage.setItem('token', access_token); // Store the token in localStorage
+            return response.data; // Return the full response data for further processing if needed
+        } else {
+            throw new Error("Access token not received");
+        }
     } catch (error){
         return Promise.reject({ error : "login failed...!"})
     }
 }
 
+export async function mealplancreate(formData){
 
-// export async function verifyPassword({ username, password }){
-//     // try {
-//     //     if(username){
-//     //         const { data } = await axios.post(`http://localhost:5001/api/login`, { username, password })
-//     //         return Promise.resolve({ data });
-//     //     }
-//     // } catch (error) {
-//     //     return Promise.reject({ error : "Password doesn't Match...!"})
-//     // }
-// }
+    console.log(formData)
+    // Retrieve the token from localStorage
+  const token = localStorage.getItem('token');
+
+  console.log(localStorage.getItem('token'))
+    // Send the request with the token in the Authorization header
+  try {
+    const response = await axios.post('http://localhost:8080/api/mealplan/createmealplan', formData, 
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        // 'Content-Type': 'multipart/form-data'
+      }
+    });
+    console.log("Success", response.data);
+    // Handle success (e.g., navigate, show message)
+    return response.data; // Return data for further processing
+  } catch (error) {
+    console.error("Error submitting form", error.response ? error.response.data : "Unknown error");
+    // Handle error (e.g., show error message)
+    throw error;
+  }
+}
+
+
+export async function fetchMealPlans(){
+    const token = localStorage.getItem("token");
+
+    try{
+        const response = await axios.get('http://localhost:8080/api/mealplan/getallmealplans',
+            {
+                headers:{
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching mealplans", error.response ? error.response.data: "Unknown error");
+        throw error;
+    }
+}
+
+export async function loadImage(imageId) {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.get(`http://localhost:8080/api/media/filedownload/${imageId}`, {
+            responseType: 'blob',
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        const url = URL.createObjectURL(response.data);
+        return url;
+    } catch (error) {
+        console.error("Error loading image", error.response ? error.response.data : "Unknown error");
+        throw error;
+    }
+}

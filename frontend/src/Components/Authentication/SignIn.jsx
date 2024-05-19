@@ -35,8 +35,9 @@ const SignIn = () => {
           if (res.error) {
             toast.error("Login failed: " + res.error);
           } else {
-            let { token } = res; // Assuming the token is directly returned
-            localStorage.setItem("token", token);
+            let { access_token } = res; // Assuming the token is directly returned
+            console.log(localStorage.getItem('token'))
+            // localStorage.setItem("token", token);
             navigate("/");
           }
         })
